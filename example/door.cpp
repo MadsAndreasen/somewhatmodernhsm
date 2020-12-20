@@ -1,29 +1,5 @@
-#include <assert.h>
-#include <stdio.h>
 #include <iostream>
-#include "hsm.h"
-
-class Door : public Hsm {
-  int tsec, tmin, thour, dday, dmonth;
-protected:
-  State opened, closed, locked;
-public:
-  Door();
-  Msg const topHndlr(Msg const msg);
-  Msg const openedHndlr(Msg const msg);
-  Msg const closedHndlr(Msg const msg);
-  Msg const lockedHndlr(Msg const msg);
-  void open();
-  void close();
-};
-
-enum class Events {
-    OPEN,
-    CLOSE,
-    LOCK,
-    UNLOCK,
-};
-
+#include "door.h"
 
 Msg const Door::topHndlr(Msg const msg) {
   if (msg.type() == typeid(StdEvents))
@@ -126,6 +102,20 @@ Msg const Door::lockedHndlr(Msg const msg) {
   return msg;
 }
 
+void Door::open()
+{
+  onEvent(Events::OPEN);
+}
+
+void Door::close()
+{
+  onEvent(Events::CLOSE);
+}
+
+void Door::lock()
+{
+  onEvent(Events::LOCK);
+}
 
 using namespace std::placeholders;
 
@@ -135,16 +125,4 @@ Door::Door() : Hsm("Door", std::bind(&Door::topHndlr, this, _1)),
   closed("closed", &top, std::bind(&Door::closedHndlr, this, _1)),
   locked("locked", &closed, std::bind(&Door::lockedHndlr, this, _1))
 {
-}
-
-int main() {
-  Door watch;
-  watch.onStart();
-  for (;;)  {
-    int i;
-    printf("\nEvent<-");
-    scanf("%d", &i);
-    watch.onEvent(static_cast<Events>(i));
-  }
-  return 0;
 }

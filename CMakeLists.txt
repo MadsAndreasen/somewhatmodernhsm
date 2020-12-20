@@ -5,3 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(src)
 add_subdirectory(example)
+
+enable_testing()
+add_subdirectory(tests)

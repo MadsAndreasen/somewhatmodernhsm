@@ -1,8 +1,5 @@
 #include "hsm.h"
 
-// static Msg const startMsg = { START_EVT };
-// static Msg const entryMsg = { ENTRY_EVT };
-// static Msg const exitMsg  = { EXIT_EVT };
 static Msg const startMsg = StdEvents::START;
 static Msg const entryMsg = StdEvents::ENTRY;
 static Msg const exitMsg  = StdEvents::EXIT;
@@ -10,12 +7,12 @@ static Msg const exitMsg  = StdEvents::EXIT;
 #define MAX_STATE_NESTING 8
 
 /* State Ctor...............................................................*/
-State::State(char const *n, State *s, EvtHndlr h)
-        : name(n), super(s), hndlr(h)
+State::State(std::string const &n, State *s, EventHandler h)
+        : name(n), super(s), eventHandler(h)
 {}
 
 /* Hsm Ctor.................................................................*/
-Hsm::Hsm(char const *n, EvtHndlr topHndlr)
+Hsm::Hsm(std::string const &n, EventHandler topHndlr)
         : top("top", 0, topHndlr), name(n)
 {}
 

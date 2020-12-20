@@ -3,40 +3,50 @@
 #include <functional>
 #include <any>
 #include <assert.h>
+#include <string>
 
 using Msg = std::any;
-using EvtHndlr = std::function<Msg const(Msg const msg)>;
+using EventHandler = std::function<Msg const(Msg const msg)>;
 
 class Hsm;
+
+enum class StdEvents
+{
+    START,
+    ENTRY,
+    EXIT
+};
+
 
 class State {
   public:
 
-    State(char const *name, State *super, EvtHndlr hndlr);
+    State(const std::string &name, State *super, EventHandler eventHandler);
 
   private:
-    Msg const onEvent(Msg const msg) {
-        return hndlr(msg);
+    Msg const onEvent(Msg const msg)
+    {
+        return eventHandler(msg);
     }
 
-    EvtHndlr hndlr;/* state's handler function */
+    EventHandler eventHandler;
     State *super;
-    char const *name;
+    std::string const &name;
 
     friend Hsm;
 };
 
-class Hsm {                        /* Hierarchical State Machine base class */
-    char const *name;                             /* pointer to static name */
-    State *curr;                                           /* current state */
+class Hsm {
+    std::string const &name;
+    State *curr;
 protected:
     State *next;                  /* next state (non 0 if transition taken) */
     State *source;                   /* source state during last transition */
     State top;                                     /* top-most state object */
 public:
-    Hsm(char const *name, EvtHndlr topHndlr);                       /* Ctor */
-    void onStart();                        /* enter and start the top state */
-    void onEvent(Msg const msg);                 /* "state machine engine" */
+    Hsm(std::string const &name, EventHandler topHndlr);
+    void onStart();
+    void onEvent(Msg const msg);
     static constexpr std::nullptr_t handled{};
 protected:
     unsigned char toLCA_(State *target);
@@ -55,16 +65,3 @@ protected:
     next = (target_); \
 } else ((void)0)
 };
-
-
-enum class StdEvents
-{
-    START,
-    ENTRY,
-    EXIT,
-    HANDLED,
-};
-
-// #define START_EVT ((Event)(-1))
-// #define ENTRY_EVT ((Event)(-2))
-// #define EXIT_EVT  ((Event)(-3))
