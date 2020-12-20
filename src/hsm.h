@@ -1,27 +1,29 @@
-/** hsm.h -- Hierarchical State Machine interface
- */
-#ifndef hsm_h
-#define hsm_h
+#pragma once
 
-typedef int Event;
-struct Msg {
-    Event evt;
-};
+#include <functional>
+#include <any>
+#include <assert.h>
 
-class Hsm;                                           /* forward declaration */
-typedef Msg const *(Hsm::*EvtHndlr)(Msg const *);
+using Msg = std::any;
+using EvtHndlr = std::function<Msg const(Msg const msg)>;
+
+class Hsm;
 
 class State {
-    State *super;                                  /* pointer to superstate */
-    EvtHndlr hndlr;                             /* state's handler function */
-    char const *name;
   public:
+
     State(char const *name, State *super, EvtHndlr hndlr);
+
   private:
-    Msg const *onEvent(Hsm *ctx, Msg const *msg) {
-        return (ctx->*hndlr)(msg);
+    Msg const onEvent(Msg const msg) {
+        return hndlr(msg);
     }
-    friend class Hsm;
+
+    EvtHndlr hndlr;/* state's handler function */
+    State *super;
+    char const *name;
+
+    friend Hsm;
 };
 
 class Hsm {                        /* Hierarchical State Machine base class */
@@ -34,7 +36,8 @@ protected:
 public:
     Hsm(char const *name, EvtHndlr topHndlr);                       /* Ctor */
     void onStart();                        /* enter and start the top state */
-    void onEvent(Msg const *msg);                 /* "state machine engine" */
+    void onEvent(Msg const msg);                 /* "state machine engine" */
+    static constexpr std::nullptr_t handled{};
 protected:
     unsigned char toLCA_(State *target);
     void exit_(unsigned char toLca);
@@ -53,8 +56,15 @@ protected:
 } else ((void)0)
 };
 
-#define START_EVT ((Event)(-1))
-#define ENTRY_EVT ((Event)(-2))
-#define EXIT_EVT  ((Event)(-3))
 
-#endif /* hsm_h */
+enum class StdEvents
+{
+    START,
+    ENTRY,
+    EXIT,
+    HANDLED,
+};
+
+// #define START_EVT ((Event)(-1))
+// #define ENTRY_EVT ((Event)(-2))
+// #define EXIT_EVT  ((Event)(-3))

@@ -1,1 +1,1 @@
-add_executable(watch main.cpp hsm.cpp)
+add_executable(door door.cpp hsm.cpp)
