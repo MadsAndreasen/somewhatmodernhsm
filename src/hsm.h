@@ -1,67 +1,78 @@
 #pragma once
 
-#include <functional>
 #include <any>
-#include <assert.h>
+#include <functional>
 #include <string>
+#include <memory>
 
-using Msg = std::any;
-using EventHandler = std::function<Msg const(Msg const msg)>;
+using EventHandler = std::function<void(void)>;
 
 class Hsm;
+class State;
 
 enum class StdEvents
 {
-    START,
     ENTRY,
+    START,
     EXIT
 };
 
+class Event
+{
+    public:
+        Event()
+        {
+            event = count++;
+        };
 
-class State {
-  public:
+        int event;
+    private:
+        static int count;
 
-    State(const std::string &name, State *super, EventHandler eventHandler);
-
-  private:
-    Msg const onEvent(Msg const msg)
-    {
-        return eventHandler(msg);
-    }
-
-    EventHandler eventHandler;
-    State *super;
-    std::string const &name;
-
-    friend Hsm;
 };
 
-class Hsm {
-    std::string const &name;
-    State *curr;
-protected:
-    State *next;                  /* next state (non 0 if transition taken) */
-    State *source;                   /* source state during last transition */
-    State top;                                     /* top-most state object */
-public:
-    Hsm(std::string const &name, EventHandler topHndlr);
-    void onStart();
-    void onEvent(Msg const msg);
-    static constexpr std::nullptr_t handled{};
-protected:
-    unsigned char toLCA_(State *target);
-    void exit_(unsigned char toLca);
-    State *STATE_CURR() { return curr; }
-    void STATE_START(State *target) {
-        assert(next == 0);
-        next = target;
-    }
-# define STATE_TRAN(target_) if (1) { \
-    static unsigned char toLca_ = 0xFF; \
-    assert(next == 0); \
-    if (toLca_ == 0xFF) \
-        toLca_ = toLCA_(target_); \
-    exit_(toLca_); \
-    next = (target_); \
-} else ((void)0)
+
+struct Transition
+{
+    State *from;
+    Event const *event;
+    State *to;
+    EventHandler eventHandler;
+};
+
+
+class State
+{
+    public:
+        State(std::string const name, State *parent, std::function<void(StdEvents)> standardEventHandler);
+
+    private:
+        std::string const name;
+        State *parent;
+
+        std::function<void(StdEvents)> handleStandardEvents;
+
+        friend Hsm;
+};
+
+class Hsm
+{
+    public:
+        Hsm(std::string const &name, State *start);
+
+        void enable();
+        void transitionTo(State *nextState);
+        void onEvent(Event const *event);
+
+        std::vector<Transition> transitions {};
+    private:
+        void entry(State *target);
+        void exit(State *target);
+        State *findCommonParent(State *other);
+
+        std::string const &name;
+        State *start;
+        State *currentState;
+
+
 };

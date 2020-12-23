@@ -18,7 +18,7 @@ add_test(NAME "testgtest" COMMAND testgtest)
 target_link_libraries(testgtest gtest gtest_main)
 
 
-add_executable(testdoor test_door.cpp ../example/door.cpp)
-target_include_directories(testdoor PUBLIC ../example)
-add_test(NAME "testdoor" COMMAND testdoor)
-target_link_libraries(testdoor hsm gtest gtest_main)
+add_executable(testmdoor test_mdoor.cpp ../example/mdoor/mdoor.cpp)
+target_include_directories(testmdoor PUBLIC ../example/mdoor)
+add_test(NAME "testmdoor" COMMAND testmdoor)
+target_link_libraries(testmdoor hsm gtest gtest_main)
