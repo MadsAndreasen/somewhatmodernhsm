@@ -13,6 +13,7 @@ public:
 
 protected:
   State start, opened, closed, locked;
+  Event OPEN, CLOSE, LOCK, KNOCK;
 
 private:
   void startStd(StdEvents event);
@@ -24,11 +25,4 @@ private:
 
   std::string doorsign = "";
 
-};
-
-enum class Events {
-    OPEN,
-    CLOSE,
-    LOCK,
-    UNLOCK,
 };

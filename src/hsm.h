@@ -61,7 +61,7 @@ class Hsm
         Hsm(std::string const &name, State *start);
 
         void enable();
-        void transitionTo(State *nextState);
+        void transitionTo(State *target);
         void onEvent(Event const *event);
 
         std::vector<Transition> transitions {};
@@ -72,7 +72,7 @@ class Hsm
 
         std::string const &name;
         State *start;
-        State *currentState;
+        State *currentState = nullptr;
 
 
 };

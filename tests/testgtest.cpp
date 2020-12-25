@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
-TEST(sample_test_case, sample_test)
+// NOLINTNEXTLINE
+TEST(sampletestCase, sampleTest)
 {
     EXPECT_EQ(1, 1);
 }

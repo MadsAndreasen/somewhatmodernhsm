@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "mdoor.h"
 
+// NOLINTNEXTLINE
 TEST(modern, sunshine_door_test)
 {
     Door door;
@@ -18,7 +19,7 @@ TEST(modern, sunshine_door_test)
 
 }
 
-
+// NOLINTNEXTLINE
 TEST(modern, cannot_lock_open_door)
 {
     Door door;
@@ -31,7 +32,7 @@ TEST(modern, cannot_lock_open_door)
 
 }
 
-
+// NOLINTNEXTLINE
 TEST(modern, open_closed_door)
 {
     Door door;
@@ -44,7 +45,7 @@ TEST(modern, open_closed_door)
 
 }
 
-
+// NOLINTNEXTLINE
 TEST(modern, knock_on_closed)
 {
     Door door;

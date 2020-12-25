@@ -1,27 +1,20 @@
-#include <iostream>
-#include <cstddef>
 #include "mdoor.h"
 
+#include <cstddef>
+#include <iostream>
 
-
-using namespace std::placeholders;
-
-namespace
-{
-    Event OPEN, CLOSE, LOCK, KNOCK;
-}
 
 Door::Door() : Hsm("Door", &start),
-    start("Start", nullptr, std::bind(&Door::startStd, this, _1)),
-    opened("Openend", &start, std::bind(&Door::openedStd, this, _1)),
-    closed("Closed", &start, std::bind(&Door::closedStd, this, _1)),
-    locked("Locked", &closed, std::bind(&Door::lockedStd, this, _1))
+    start("Start", nullptr, [&] (auto event){startStd(event);}),
+    opened("Openend", &start, [&] (auto event){openedStd(event);}),
+    closed("Closed", &start, [&] (auto event){closedStd(event);}),
+    locked("Locked", &closed, [&] (auto event) {lockedStd(event);})
 {
     transitions = std::vector<Transition>{
         Transition{&opened, &CLOSE, &closed},
         Transition{&closed, &OPEN, &opened},
         Transition{&closed, &LOCK, &locked},
-        Transition{&closed, &KNOCK, &closed, std::bind(&Door::closed_knock, this)}
+        Transition{&closed, &KNOCK, &closed, [&] { closed_knock();}}
     };
     enable();
 }
@@ -53,7 +46,7 @@ void Door::closed_knock()
 }
 
 
-std::string Door::readDoorSign()
+auto Door::readDoorSign() -> std::string
 {
     return doorsign;
 }
@@ -67,6 +60,8 @@ void Door::startStd(StdEvents event)
         break;
     case StdEvents::ENTRY:
         doorsign = "Door is beeing built";
+        break;
+    default:
         break;
     }
 }

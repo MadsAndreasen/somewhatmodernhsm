@@ -1,6 +1,6 @@
 
 #include "mdoor.h"
 
-int main()
+auto main() -> int
 {
 }

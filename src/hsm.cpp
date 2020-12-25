@@ -11,7 +11,7 @@ Hsm::Hsm(std::string const &name, State *start)
 
 void Hsm::onEvent(Event const *event)
 {
-    for (auto iterator = currentState; iterator != nullptr; iterator = iterator->parent)
+    for (auto* iterator = currentState; iterator != nullptr; iterator = iterator->parent)
     {
         for (auto &transition : transitions)
         {
@@ -49,17 +49,17 @@ void Hsm::transitionTo(State *target)
 void Hsm::exit(State *target)
 {
     State *commonParent = findCommonParent(target);
-    for (auto iterator = currentState; iterator != commonParent; iterator = iterator->parent)
+    for (auto* iterator = currentState; iterator != commonParent; iterator = iterator->parent)
     {
         iterator->handleStandardEvents(StdEvents::EXIT);
     }
 }
 
-State *Hsm::findCommonParent(State *other)
+auto Hsm::findCommonParent(State *other) -> State*
 {
-    for (auto source = currentState; source != nullptr; source = source->parent)
+    for (auto* source = currentState; source != nullptr; source = source->parent)
     {
-        for (auto target = other; target != nullptr; target = target->parent)
+        for (auto* target = other; target != nullptr; target = target->parent)
         {
             if (source == target)
             {
@@ -67,30 +67,33 @@ State *Hsm::findCommonParent(State *other)
             }
         }
     }
-    throw std::logic_error("No common parent - " + currentState->name + " - " + other->name);
+
+    auto currentName = (currentState != nullptr) ? currentState->name : "";
+    auto otherName = (other != nullptr) ? other->name : "";
+    throw std::logic_error("No common parent - " + currentName + " - " + otherName);
 }
 
 void Hsm::entry(State *target)
 {
     State *commonParent = findCommonParent(target);
 
-    auto currentStep = target;
+    auto* currentStep = target;
     std::stack<State*> trace;
-    for(auto currentStep = target; currentStep != commonParent; currentStep = currentStep->parent)
+    for(auto* currentStep = target; currentStep != commonParent; currentStep = currentStep->parent)
     {
         trace.push(currentStep);
     }
     while (!trace.empty())
     {
-        auto current = trace.top();
+        auto* current = trace.top();
         current->handleStandardEvents(StdEvents::ENTRY);
         trace.pop();
     }
 
 }
 
-State::State(std::string const name, State *parent, std::function<void(StdEvents)> standardEventHandler)
-: name(name), parent(parent), handleStandardEvents(standardEventHandler)
+State::State(std::string name, State *parent, std::function<void(StdEvents)> standardEventHandler)
+: name(std::move(name)), parent(parent), handleStandardEvents(std::move(standardEventHandler))
 {
 
 }
