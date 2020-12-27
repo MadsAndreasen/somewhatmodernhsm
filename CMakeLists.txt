@@ -5,9 +5,10 @@ cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(DO_LINT OFF)
+option(LINT OFF)
+option(HSM_TESTING OFF)
 
-if(${DO_LINT})
+if(LINT)
     set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=*,-fuchsia-*)
 endif()
 
@@ -15,5 +16,7 @@ endif()
 add_subdirectory(src)
 add_subdirectory(example)
 
-enable_testing()
-add_subdirectory(tests)
+if(HSM_TESTING)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
