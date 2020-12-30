@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 17)
 
 option(LINT "" ON)
-option(HSM_TESTING "" ON)
+option(HSM_TESTING "" OFF)
 
 if(LINT)
     set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=*,-fuchsia-*)
