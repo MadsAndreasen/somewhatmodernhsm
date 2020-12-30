@@ -12,6 +12,9 @@ set(BUILD_GTEST ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(googletest)
 
+set_target_properties(gtest PROPERTIES CXX_CLANG_TIDY "")
+set_target_properties(gtest_main PROPERTIES CXX_CLANG_TIDY "")
+
 
 add_executable(testgtest testgtest.cpp)
 add_test(NAME "testgtest" COMMAND testgtest)
