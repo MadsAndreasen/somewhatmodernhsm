@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_CXX_STANDARD 17)
 
-option(LINT "" ON)
+option(LINT "" OFF)
 option(HSM_TESTING "" OFF)
 
 if(LINT)
