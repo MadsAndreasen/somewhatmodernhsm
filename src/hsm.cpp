@@ -77,7 +77,6 @@ void Hsm::entry(State *target)
 {
     State *commonParent = findCommonParent(target);
 
-    auto* currentStep = target;
     std::stack<State*> trace;
     for(auto* currentStep = target; currentStep != commonParent; currentStep = currentStep->parent)
     {
