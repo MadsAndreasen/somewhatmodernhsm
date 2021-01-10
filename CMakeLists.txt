@@ -12,11 +12,10 @@ if(LINT)
     set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=*,-fuchsia-*)
 endif()
 
-
 add_subdirectory(src)
-add_subdirectory(example)
 
 if(HSM_TESTING)
+    add_subdirectory(example)
     enable_testing()
     add_subdirectory(tests)
 endif()
