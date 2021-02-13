@@ -44,6 +44,7 @@ void Hsm::transitionTo(State *target)
     exit(target);
     entry(target);
     currentState = target;
+    currentState->handleStandardEvents(StdEvents::START);
 }
 
 void Hsm::exit(State *target)

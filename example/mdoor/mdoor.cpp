@@ -98,7 +98,7 @@ void Door::openedStd(StdEvents event)
 {
     switch (event)
     {
-    case StdEvents::ENTRY:
+    case StdEvents::START:
         doorsign = "Come on in";
         break;
 
