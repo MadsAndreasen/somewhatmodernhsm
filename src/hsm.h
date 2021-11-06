@@ -4,6 +4,7 @@
 #include <functional>
 #include <string>
 #include <memory>
+#include <vector>
 
 using EventHandler = std::function<void(void)>;
 

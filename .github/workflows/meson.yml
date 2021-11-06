@@ -1,0 +1,28 @@
+name: Meson
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: sudo apt-get install clang-tidy ninja-build python3
+
+    - name: Install mesons
+      run: python3 -m pip install meson
+
+    - name: Create Build Environment
+      run: meson setup build
+
+    - name: Compile
+      shell: bash
+      working-directory: build
+      run: meson compile
+
+    - name: Test
+      working-directory: build
+      shell: bash
+      run: meson test
