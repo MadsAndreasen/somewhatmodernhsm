@@ -56,3 +56,9 @@ TEST(modern, knock_on_closed)
     door.open();
     EXPECT_EQ("Come on in", door.readDoorSign());
 }
+
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
