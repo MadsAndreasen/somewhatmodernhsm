@@ -68,3 +68,11 @@ build.ninja
 compile_commands.json
 
 # End of https://www.toptal.com/developers/gitignore/api/meson
+
+lib
+example/mdoor/mdoor
+example/wizard/wizard
+src/libhsm.a
+tests/testgtest
+tests/testmdoor
+
