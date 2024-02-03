@@ -8,9 +8,12 @@
 		// Configure properties specific to VS Code.
 		"vscode": {
 		  // Add the IDs of extensions you want installed when the container is created.
-		  "extensions": ["llvm-vs-code-extensions.vscode-clangd",
-		  				 "mesonbuild.mesonbuild",
-						 "matepek.vscode-catch2-test-adapter"]
+		  "extensions": [
+			"llvm-vs-code-extensions.vscode-clangd",
+			"mesonbuild.mesonbuild",
+			"matepek.vscode-catch2-test-adapter",
+			"vadimcn.vscode-lldb"
+		]
 		}
 	  }
 }
