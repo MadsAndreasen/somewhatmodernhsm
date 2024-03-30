@@ -1,6 +1,5 @@
 #include "wizard.h"
 
-#include <cstddef>
 #include <iostream>
 
 
@@ -69,16 +68,19 @@ void WizardsWorld::startStd(StdEvents event)
     case StdEvents::START:
         transitionTo(&frontGarden);
         break;
+    case StdEvents::ENTRY:
+    case StdEvents::EXIT:
+      break;
     }
 }
 
 void WizardsWorld::houseAction(StdEvents event)
 {
     if(StdEvents::ENTRY == event) {
-        std::cout << "You are cursed with a magic spell" << std::endl;
+        std::cout << "You are cursed with a magic spell" << '\n';
     }
     if(StdEvents::EXIT == event) {
-        std::cout << "The magic spell is removed from you" << std::endl;
+        std::cout << "The magic spell is removed from you" << '\n';
     }
 }
 
@@ -91,7 +93,7 @@ void WizardsWorld::hallAction(StdEvents event)
 {
     if(StdEvents::START == event)
     {
-        std::cout << "The wizard's hall is small and smelly" << std::endl;
+        std::cout << "The wizard's hall is small and smelly" << '\n';
     }
 }
 
@@ -99,7 +101,7 @@ void WizardsWorld::kitchenAction(StdEvents event)
 {
     if(StdEvents::START == event)
     {
-        std::cout << "The kitchen is a complete mess!" << std::endl;
+        std::cout << "The kitchen is a complete mess!" << '\n';
     }
 }
 
@@ -107,7 +109,7 @@ void WizardsWorld::frontGardenAction(StdEvents event)
 {
     if(StdEvents::START == event)
     {
-        std::cout << "You are standing in the wizard's front garden" << std::endl;
+        std::cout << "You are standing in the wizard's front garden" << '\n';
     }
 }
 
@@ -115,16 +117,16 @@ void WizardsWorld::wellAction(StdEvents event)
 {
     if(StdEvents::START == event)
     {
-        std::cout << "The water in the well does not look clean" << std::endl;
+        std::cout << "The water in the well does not look clean" << '\n';
     }
 }
 
 void WizardsWorld::getHungry()
 {
-    std::cout << "The kitchen smells nice and you get hungry" << std::endl;
+    std::cout << "The kitchen smells nice and you get hungry" << '\n';
 }
 
 void WizardsWorld::eat()
 {
-    std::cout << "You eat some slimy stuff from the table" << std::endl;
+    std::cout << "You eat some slimy stuff from the table" << '\n';
 }
