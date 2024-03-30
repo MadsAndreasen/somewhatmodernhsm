@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ctime>
 #include <functional>
 #include <string>
 #include <vector>
@@ -21,12 +22,17 @@ class Event
     public:
         Event()
         {
-            event = count++;
+            std::srand(std::time(nullptr)); //NOLINT - Don't complain about the seed value
+            m_event = std::rand(); //NOLINT
         };
 
-        int event;
+        auto operator==(Event const &other) const -> bool
+        {
+            return m_event == other.m_event;
+        }
+
     private:
-        static int count;
+        int m_event;
 
 };
 

@@ -15,7 +15,7 @@ void Hsm::onEvent(Event const *event)
     {
         for (auto &transition : transitions)
         {
-            if ((transition.event->event == event->event) && (transition.from == iterator))
+            if ((transition.event == event) && (transition.from == iterator))
             {
                 if (transition.to == transition.from)
                 {
@@ -97,6 +97,3 @@ State::State(std::string name, State *parent, std::function<void(StdEvents)> sta
 {
 
 }
-
-
-int Event::count = 0;
