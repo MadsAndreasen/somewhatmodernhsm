@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-std::string readCmd()
+auto readCmd() -> std::string
 {
     std::string cmd;
     std::getline(std::cin, cmd);
@@ -19,7 +19,7 @@ auto main() -> int
         if("quit" == cmd || "q" == cmd) {
             break;
         }
-        else if("north" == cmd || "n" == cmd) {
+        if("north" == cmd || "n" == cmd) {
             world.north();
         }
         else if("east" == cmd || "e" == cmd) {
@@ -38,8 +38,8 @@ auto main() -> int
             world.take();
         }
         else {
-            std::cout << "I do not understand" << std::endl;
-            std::cout << "Possible commands: north, east, south, west, quit" << std::endl;
+            std::cout << "I do not understand" << '\n';
+            std::cout << "Possible commands: north, east, south, west, quit" << '\n';
         }
     }
 }

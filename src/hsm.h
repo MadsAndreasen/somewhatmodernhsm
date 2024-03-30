@@ -1,9 +1,9 @@
 #pragma once
 
-#include <any>
+#include <ctime>
 #include <functional>
-#include <string>
 #include <memory>
+#include <string>
 #include <vector>
 
 using EventHandler = std::function<void(void)>;
@@ -23,21 +23,26 @@ class Event
     public:
         Event()
         {
-            event = count++;
+            std::srand(std::time(nullptr)); //NOLINT - Don't complain about the seed value
+            event_id = std::rand(); //NOLINT
         };
 
-        int event;
+        auto operator==(Event const &other) const -> bool
+        {
+            return event_id == other.event_id;
+        }
+
     private:
-        static int count;
+        int event_id;
 
 };
 
 
 struct Transition
 {
-    State *from;
+    std::shared_ptr<State> from;
     Event const *event;
-    State *to;
+    std::shared_ptr<State> to;
     EventHandler eventHandler;
 };
 
@@ -45,11 +50,11 @@ struct Transition
 class State
 {
     public:
-        State(std::string const name, State *parent, std::function<void(StdEvents)> standardEventHandler);
+        State(std::string name, std::shared_ptr<State>parent, std::function<void(StdEvents)> standardEventHandler);
 
     private:
-        std::string const name;
-        State *parent;
+        std::string name;
+        std::shared_ptr<State> parent;
 
         std::function<void(StdEvents)> handleStandardEvents;
 
@@ -59,21 +64,22 @@ class State
 class Hsm
 {
     public:
-        Hsm(std::string const &name, State *start);
+        explicit Hsm(std::string name);
 
-        void enable();
-        void transitionTo(State *target);
+        void activate(std::vector<std::shared_ptr<State>> states, std::vector<Transition> transitions);
+
+    protected:
         void onEvent(Event const *event);
 
-        std::vector<Transition> transitions {};
     private:
-        void entry(State *target);
-        void exit(State *target);
-        State *findCommonParent(State *other);
+        void transitionTo(std::shared_ptr<State> const &target);
+        void onEvent(StdEvents event);
+        void entry(std::shared_ptr<State> const &target);
+        void exit(std::shared_ptr<State> const &target);
+        auto findCommonParent(std::shared_ptr<State> const &other) -> std::shared_ptr<State>;
 
-        std::string const &name;
-        State *start;
-        State *currentState = nullptr;
-
-
+        std::vector<Transition> transitions {};
+        std::vector<std::shared_ptr<State>> states {};
+        std::string name;
+        std::shared_ptr<State> currentState = nullptr;
 };

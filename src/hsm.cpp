@@ -1,21 +1,23 @@
 #include "hsm.h"
 
+#include <memory>
 #include <stack>
-#include <stdexcept>
+#include <utility>
+#include <vector>
 
-Hsm::Hsm(std::string const &name, State *start)
-    : name(name), start(start)
+Hsm::Hsm(std::string name)
+    : name(std::move(name))
 {
 
 }
 
 void Hsm::onEvent(Event const *event)
 {
-    for (auto* iterator = currentState; iterator != nullptr; iterator = iterator->parent)
+    for (auto iterator = currentState; iterator != nullptr; iterator = iterator->parent)
     {
         for (auto &transition : transitions)
         {
-            if ((transition.event->event == event->event) && (transition.from == iterator))
+            if ((transition.event == event) && (transition.from == iterator))
             {
                 if (transition.to == transition.from)
                 {
@@ -32,14 +34,22 @@ void Hsm::onEvent(Event const *event)
     }
 }
 
-void Hsm::enable()
+void Hsm::onEvent(StdEvents event)
 {
-    currentState = start;
-    start->handleStandardEvents(StdEvents::ENTRY);
-    start->handleStandardEvents(StdEvents::START);
+    currentState->handleStandardEvents(event);
 }
 
-void Hsm::transitionTo(State *target)
+void Hsm::activate(std::vector<std::shared_ptr<State>> states, std::vector<Transition> transitions)
+{
+    this->transitions = std::move(transitions);
+    this->states = std::move(states);
+    currentState = this->states.at(0);
+
+    onEvent(StdEvents::ENTRY);
+    onEvent(StdEvents::START);
+}
+
+void Hsm::transitionTo(std::shared_ptr<State> const &target)
 {
     exit(target);
     entry(target);
@@ -47,20 +57,20 @@ void Hsm::transitionTo(State *target)
     currentState->handleStandardEvents(StdEvents::START);
 }
 
-void Hsm::exit(State *target)
+void Hsm::exit(std::shared_ptr<State> const &target)
 {
-    State *commonParent = findCommonParent(target);
-    for (auto* iterator = currentState; iterator != commonParent; iterator = iterator->parent)
+    auto commonParent = findCommonParent(target);
+    for (auto iterator = currentState; iterator != commonParent; iterator = iterator->parent)
     {
         iterator->handleStandardEvents(StdEvents::EXIT);
     }
 }
 
-auto Hsm::findCommonParent(State *other) -> State*
+auto Hsm::findCommonParent(std::shared_ptr<State> const &other) -> std::shared_ptr<State>
 {
-    for (auto* source = currentState; source != nullptr; source = source->parent)
+    for (auto source = currentState; source != nullptr; source = source->parent)
     {
-        for (auto* target = other; target != nullptr; target = target->parent)
+        for (auto target = other; target != nullptr; target = target->parent)
         {
             if (source == target)
             {
@@ -68,35 +78,29 @@ auto Hsm::findCommonParent(State *other) -> State*
             }
         }
     }
-
-    auto currentName = (currentState != nullptr) ? currentState->name : "";
-    auto otherName = (other != nullptr) ? other->name : "";
-    throw std::logic_error("No common parent - " + currentName + " - " + otherName);
+    return nullptr;
 }
 
-void Hsm::entry(State *target)
+void Hsm::entry(std::shared_ptr<State> const &target)
 {
-    State *commonParent = findCommonParent(target);
+    auto commonParent = findCommonParent(target);
 
-    std::stack<State*> trace;
-    for(auto* currentStep = target; currentStep != commonParent; currentStep = currentStep->parent)
+    std::stack<std::shared_ptr<State>> trace;
+    for(auto currentStep = target; currentStep != commonParent; currentStep = currentStep->parent)
     {
         trace.push(currentStep);
     }
     while (!trace.empty())
     {
-        auto* current = trace.top();
+        auto current = trace.top();
         current->handleStandardEvents(StdEvents::ENTRY);
         trace.pop();
     }
 
 }
 
-State::State(std::string name, State *parent, std::function<void(StdEvents)> standardEventHandler)
-: name(std::move(name)), parent(parent), handleStandardEvents(std::move(standardEventHandler))
+State::State(std::string name, std::shared_ptr<State> parent, std::function<void(StdEvents)> standardEventHandler)
+: name(std::move(name)), parent(std::move(parent)), handleStandardEvents(std::move(standardEventHandler))
 {
 
 }
-
-
-int Event::count = 0;

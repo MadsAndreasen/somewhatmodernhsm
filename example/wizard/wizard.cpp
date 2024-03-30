@@ -1,30 +1,29 @@
 #include "wizard.h"
 
-#include <cstddef>
 #include <iostream>
 
 
-WizardsWorld::WizardsWorld() :
-    Hsm("WizardsWorld", &world),
-    world("World", nullptr, [&] (auto event){startStd(event);}),
-    house("house", &world, [&] (auto event){houseAction(event);}),
-    hall("hall", &house, [&] (auto event){hallAction(event);}),
-    kitchen("kitchen", &house, [&] (auto event){kitchenAction(event);}),
-    garden("garden", &world, [&] (auto event){gardenAction(event);}),
-    frontGarden("frontGarden", &garden, [&] (auto event){frontGardenAction(event);}),
-    well("well", &garden, [&] (auto event){wellAction(event);})
+WizardsWorld::WizardsWorld() : Hsm("WizardsWorld")
 {
-    transitions = std::vector<Transition>{
-        Transition{&frontGarden, &NORTH, &hall},
-        Transition{&frontGarden, &WEST, &well},
-        Transition{&hall, &NORTH, &kitchen},
-        Transition{&hall, &SOUTH, &frontGarden},
-        Transition{&kitchen, &SOUTH, &hall},
-        Transition{&kitchen, &SMELL, &kitchen, [&]() { getHungry(); }},
-        Transition{&kitchen, &EAT, &kitchen, [&]() { eat(); }},
-        Transition{&well, &EAST, &frontGarden}
+    auto house = std::make_shared<State>("house", nullptr, [&] (auto event){houseAction(event);});
+    auto hall = std::make_shared<State>("hall", house, [&] (auto event){hallAction(event);});
+    auto kitchen = std::make_shared<State>("kitchen", house, [&] (auto event){kitchenAction(event);});
+    auto garden = std::make_shared<State>("garden", nullptr, [&] (auto event){gardenAction(event);});
+    auto frontGarden = std::make_shared<State>("frontGarden", garden, [&] (auto event){frontGardenAction(event);});
+    auto well = std::make_shared<State>("well", garden, [&] (auto event){wellAction(event);});
+
+    auto states = {frontGarden, house, hall, kitchen, garden,well};
+    auto transitions = {
+        Transition{frontGarden, &NORTH, hall},
+        Transition{frontGarden, &WEST, well},
+        Transition{hall, &NORTH, kitchen},
+        Transition{hall, &SOUTH, frontGarden},
+        Transition{kitchen, &SOUTH, hall},
+        Transition{kitchen, &SMELL, kitchen, [&]() { getHungry(); }},
+        Transition{kitchen, &EAT, kitchen, [&]() { eat(); }},
+        Transition{well, &EAST, frontGarden}
     };
-    enable();
+    activate(states, transitions);
 }
 
 void WizardsWorld::north()
@@ -62,23 +61,13 @@ void WizardsWorld::noAction(StdEvents event)
 
 }
 
-void WizardsWorld::startStd(StdEvents event)
-{
-    switch (event)
-    {
-    case StdEvents::START:
-        transitionTo(&frontGarden);
-        break;
-    }
-}
-
 void WizardsWorld::houseAction(StdEvents event)
 {
     if(StdEvents::ENTRY == event) {
-        std::cout << "You are cursed with a magic spell" << std::endl;
+        std::cout << "You are cursed with a magic spell" << '\n';
     }
     if(StdEvents::EXIT == event) {
-        std::cout << "The magic spell is removed from you" << std::endl;
+        std::cout << "The magic spell is removed from you" << '\n';
     }
 }
 
@@ -91,7 +80,7 @@ void WizardsWorld::hallAction(StdEvents event)
 {
     if(StdEvents::START == event)
     {
-        std::cout << "The wizard's hall is small and smelly" << std::endl;
+        std::cout << "The wizard's hall is small and smelly" << '\n';
     }
 }
 
@@ -99,7 +88,7 @@ void WizardsWorld::kitchenAction(StdEvents event)
 {
     if(StdEvents::START == event)
     {
-        std::cout << "The kitchen is a complete mess!" << std::endl;
+        std::cout << "The kitchen is a complete mess!" << '\n';
     }
 }
 
@@ -107,7 +96,7 @@ void WizardsWorld::frontGardenAction(StdEvents event)
 {
     if(StdEvents::START == event)
     {
-        std::cout << "You are standing in the wizard's front garden" << std::endl;
+        std::cout << "You are standing in the wizard's front garden" << '\n';
     }
 }
 
@@ -115,16 +104,16 @@ void WizardsWorld::wellAction(StdEvents event)
 {
     if(StdEvents::START == event)
     {
-        std::cout << "The water in the well does not look clean" << std::endl;
+        std::cout << "The water in the well does not look clean" << '\n';
     }
 }
 
 void WizardsWorld::getHungry()
 {
-    std::cout << "The kitchen smells nice and you get hungry" << std::endl;
+    std::cout << "The kitchen smells nice and you get hungry" << '\n';
 }
 
 void WizardsWorld::eat()
 {
-    std::cout << "You eat some slimy stuff from the table" << std::endl;
+    std::cout << "You eat some slimy stuff from the table" << '\n';
 }

@@ -1,22 +1,21 @@
 #include "mdoor.h"
-
-#include <cstddef>
-#include <iostream>
+#include <memory>
 
 
-Door::Door() : Hsm("Door", &start),
-    start("Start", nullptr, [&] (auto event){startStd(event);}),
-    opened("Openend", &start, [&] (auto event){openedStd(event);}),
-    closed("Closed", &start, [&] (auto event){closedStd(event);}),
-    locked("Locked", &closed, [&] (auto event) {lockedStd(event);})
+Door::Door() : Hsm("Door")
 {
-    transitions = std::vector<Transition>{
-        Transition{&opened, &CLOSE, &closed},
-        Transition{&closed, &OPEN, &opened},
-        Transition{&closed, &LOCK, &locked},
-        Transition{&closed, &KNOCK, &closed, [&] { closed_knock();}}
+    auto opened = std::make_shared<State>("Opened", nullptr, [&] (auto event){openedStd(event);});
+    auto closed = std::make_shared<State>("Closed", nullptr, [&] (auto event){closedStd(event);});
+    auto locked = std::make_shared<State>("Locked", closed, [&] (auto event) {lockedStd(event);});
+
+    auto states = {closed, opened,  locked};
+    auto transitions = {
+        Transition{opened, &CLOSE, closed},
+        Transition{closed, &OPEN, opened},
+        Transition{closed, &LOCK, locked},
+        Transition{closed, &KNOCK, closed, [&] { closed_knock();}}
     };
-    enable();
+    activate(states, transitions);
 }
 
 void Door::open()
@@ -50,22 +49,6 @@ auto Door::readDoorSign() -> std::string
 {
     return doorsign;
 }
-
-void Door::startStd(StdEvents event)
-{
-    switch (event)
-    {
-    case StdEvents::START:
-        transitionTo(&closed);
-        break;
-    case StdEvents::ENTRY:
-        doorsign = "Door is beeing built";
-        break;
-    default:
-        break;
-    }
-}
-
 
 void Door::closedStd(StdEvents event)
 {
