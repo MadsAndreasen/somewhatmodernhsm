@@ -1,9 +1,7 @@
 #pragma once
 
-#include <any>
 #include <functional>
 #include <string>
-#include <memory>
 #include <vector>
 
 using EventHandler = std::function<void(void)>;
@@ -45,10 +43,10 @@ struct Transition
 class State
 {
     public:
-        State(std::string const name, State *parent, std::function<void(StdEvents)> standardEventHandler);
+        State(std::string name, State *parent, std::function<void(StdEvents)> standardEventHandler);
 
     private:
-        std::string const name;
+        std::string name;
         State *parent;
 
         std::function<void(StdEvents)> handleStandardEvents;
@@ -67,11 +65,12 @@ class Hsm
 
         std::vector<Transition> transitions {};
     private:
+
         void entry(State *target);
         void exit(State *target);
-        State *findCommonParent(State *other);
+        auto findCommonParent(State *other) -> State *;
 
-        std::string const &name;
+        std::string name;
         State *start;
         State *currentState = nullptr;
 

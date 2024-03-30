@@ -11,11 +11,10 @@ public:
 
   std::string readDoorSign();
 
-protected:
+private:
   State start, opened, closed, locked;
   Event OPEN, CLOSE, LOCK, KNOCK;
 
-private:
   void startStd(StdEvents event);
   void closedStd(StdEvents event);
   void openedStd(StdEvents event);
@@ -23,6 +22,6 @@ private:
 
   void closed_knock();
 
-  std::string doorsign = "";
+  std::string doorsign;
 
 };

@@ -11,12 +11,11 @@ public:
   void smell();
   void take();
 
-protected:
+private:
   State world, house, hall, kitchen, garden, frontGarden, well;
   Event NORTH, EAST, SOUTH, WEST;
   Event SMELL, EAT;
 
-private:
   void noAction(StdEvents event);
   void houseAction(StdEvents event);
   void gardenAction(StdEvents event);
