@@ -12,12 +12,10 @@ public:
   void take();
 
 private:
-  Event NORTH, EAST, SOUTH, WEST;
-  Event SMELL, EAT;
+  Event NORTH{}, EAST{}, SOUTH{}, WEST{};
+  Event SMELL{}, EAT{};
 
-  void noAction(StdEvents event);
   static void houseAction(StdEvents event);
-  void gardenAction(StdEvents event);
   void startStd(StdEvents event);
   static void hallAction(StdEvents event);
   static void kitchenAction(StdEvents event);

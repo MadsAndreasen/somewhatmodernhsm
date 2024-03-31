@@ -1,9 +1,11 @@
 #pragma once
 
-#include <ctime>
 #include <functional>
 #include <memory>
+#include <optional>
+#include <random>
 #include <string>
+#include <sys/types.h>
 #include <vector>
 
 using EventHandler = std::function<void(void)>;
@@ -21,11 +23,10 @@ enum class StdEvents
 class Event
 {
     public:
-        Event()
+        Event() : event_id(std::default_random_engine{std::random_device{}()}())
         {
-            std::srand(std::time(nullptr)); //NOLINT - Don't complain about the seed value
-            event_id = std::rand(); //NOLINT
-        };
+
+        }
 
         auto operator==(Event const &other) const -> bool
         {
@@ -33,7 +34,7 @@ class Event
         }
 
     private:
-        int event_id;
+        u_int64_t event_id = 0;
 
 };
 
@@ -43,7 +44,7 @@ struct Transition
     std::shared_ptr<State> from;
     Event const *event;
     std::shared_ptr<State> to;
-    EventHandler eventHandler;
+    std::optional<EventHandler> eventHandler;
 };
 
 

@@ -5,8 +5,8 @@
 #include <utility>
 #include <vector>
 
-Hsm::Hsm(std::string name)
-    : name(std::move(name))
+Hsm::Hsm(std::string stateMachineName)
+    : name(std::move(stateMachineName))
 {
 
 }
@@ -21,7 +21,7 @@ void Hsm::onEvent(Event const *event)
             {
                 if (transition.to == transition.from)
                 {
-                    transition.eventHandler();
+                    transition.eventHandler.value_or([] {})();
                 }
                 else
                 {
@@ -39,10 +39,10 @@ void Hsm::onEvent(StdEvents event)
     currentState->handleStandardEvents(event);
 }
 
-void Hsm::activate(std::vector<std::shared_ptr<State>> states, std::vector<Transition> transitions)
+void Hsm::activate(std::vector<std::shared_ptr<State>> statesList, std::vector<Transition> transitionsList)
 {
-    this->transitions = std::move(transitions);
-    this->states = std::move(states);
+    this->transitions = std::move(transitionsList);
+    states = std::move(statesList);
     currentState = this->states.at(0);
 
     onEvent(StdEvents::ENTRY);
@@ -99,8 +99,8 @@ void Hsm::entry(std::shared_ptr<State> const &target)
 
 }
 
-State::State(std::string name, std::shared_ptr<State> parent, std::function<void(StdEvents)> standardEventHandler)
-: name(std::move(name)), parent(std::move(parent)), handleStandardEvents(std::move(standardEventHandler))
+State::State(std::string stateName, std::shared_ptr<State> stateParent, std::function<void(StdEvents)> standardEventHandler)
+: name(std::move(stateName)), parent(std::move(stateParent)), handleStandardEvents(std::move(standardEventHandler))
 {
 
 }

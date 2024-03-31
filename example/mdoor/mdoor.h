@@ -12,7 +12,7 @@ public:
   auto readDoorSign() -> std::string;
 
 private:
-  Event OPEN, CLOSE, LOCK, KNOCK;
+  Event OPEN{}, CLOSE{}, LOCK{}, KNOCK{};
 
   void startStd(StdEvents event);
   void closedStd(StdEvents event);
@@ -21,6 +21,6 @@ private:
 
   void closed_knock();
 
-  std::string doorsign;
+  std::string doorsign{};
 
 };

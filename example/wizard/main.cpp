@@ -3,12 +3,14 @@
 #include <iostream>
 #include <string>
 
+namespace {
 auto readCmd() -> std::string
 {
     std::string cmd;
     std::getline(std::cin, cmd);
     return cmd;
 }
+} // namespace
 
 auto main() -> int
 {

@@ -1,5 +1,7 @@
 #include "mdoor.h"
+#include "hsm.h"
 #include <memory>
+#include <optional>
 
 
 Door::Door() : Hsm("Door")
@@ -8,14 +10,14 @@ Door::Door() : Hsm("Door")
     auto closed = std::make_shared<State>("Closed", nullptr, [&] (auto event){closedStd(event);});
     auto locked = std::make_shared<State>("Locked", closed, [&] (auto event) {lockedStd(event);});
 
-    auto states = {closed, opened,  locked};
-    auto transitions = {
-        Transition{opened, &CLOSE, closed},
-        Transition{closed, &OPEN, opened},
-        Transition{closed, &LOCK, locked},
+    auto doorStates = {closed, opened,  locked};
+    auto doorTransitions = {
+        Transition{opened, &CLOSE, closed, std::nullopt},
+        Transition{closed, &OPEN, opened, std::nullopt},
+        Transition{closed, &LOCK, locked, std::nullopt},
         Transition{closed, &KNOCK, closed, [&] { closed_knock();}}
     };
-    activate(states, transitions);
+    activate(doorStates, doorTransitions);
 }
 
 void Door::open()
@@ -52,40 +54,25 @@ auto Door::readDoorSign() -> std::string
 
 void Door::closedStd(StdEvents event)
 {
-    switch (event)
+    if (event == StdEvents::ENTRY)
     {
-    case StdEvents::ENTRY:
         doorsign = "Knock to open";
-        break;
-
-    default:
-        break;
     }
 }
 
 void Door::lockedStd(StdEvents event)
 {
-    switch (event)
+    if (event == StdEvents::ENTRY)
     {
-    case StdEvents::ENTRY:
         doorsign = "Come back later";
-        break;
-
-    default:
-        break;
     }
 }
 
 
 void Door::openedStd(StdEvents event)
 {
-    switch (event)
+    if (event == StdEvents::START)
     {
-    case StdEvents::START:
         doorsign = "Come on in";
-        break;
-
-    default:
-        break;
     }
 }
