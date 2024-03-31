@@ -9,10 +9,9 @@ public:
   void lock();
   void knock();
 
-  std::string readDoorSign();
+  auto readDoorSign() -> std::string;
 
 private:
-  State start, opened, closed, locked;
   Event OPEN, CLOSE, LOCK, KNOCK;
 
   void startStd(StdEvents event);
