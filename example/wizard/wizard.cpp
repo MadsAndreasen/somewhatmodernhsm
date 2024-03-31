@@ -3,27 +3,27 @@
 #include <iostream>
 
 
-WizardsWorld::WizardsWorld() :
-    Hsm("WizardsWorld", &world),
-    world("World", nullptr, [&] (auto event){startStd(event);}),
-    house("house", &world, [&] (auto event){houseAction(event);}),
-    hall("hall", &house, [&] (auto event){hallAction(event);}),
-    kitchen("kitchen", &house, [&] (auto event){kitchenAction(event);}),
-    garden("garden", &world, [&] (auto event){gardenAction(event);}),
-    frontGarden("frontGarden", &garden, [&] (auto event){frontGardenAction(event);}),
-    well("well", &garden, [&] (auto event){wellAction(event);})
+WizardsWorld::WizardsWorld() : Hsm("WizardsWorld")
 {
-    transitions = std::vector<Transition>{
-        Transition{&frontGarden, &NORTH, &hall},
-        Transition{&frontGarden, &WEST, &well},
-        Transition{&hall, &NORTH, &kitchen},
-        Transition{&hall, &SOUTH, &frontGarden},
-        Transition{&kitchen, &SOUTH, &hall},
-        Transition{&kitchen, &SMELL, &kitchen, [&]() { getHungry(); }},
-        Transition{&kitchen, &EAT, &kitchen, [&]() { eat(); }},
-        Transition{&well, &EAST, &frontGarden}
+    auto house = std::make_shared<State>("house", nullptr, [&] (auto event){houseAction(event);});
+    auto hall = std::make_shared<State>("hall", house, [&] (auto event){hallAction(event);});
+    auto kitchen = std::make_shared<State>("kitchen", house, [&] (auto event){kitchenAction(event);});
+    auto garden = std::make_shared<State>("garden", nullptr, [&] (auto event){gardenAction(event);});
+    auto frontGarden = std::make_shared<State>("frontGarden", garden, [&] (auto event){frontGardenAction(event);});
+    auto well = std::make_shared<State>("well", garden, [&] (auto event){wellAction(event);});
+
+    auto states = {frontGarden, house, hall, kitchen, garden,well};
+    auto transitions = {
+        Transition{frontGarden, &NORTH, hall},
+        Transition{frontGarden, &WEST, well},
+        Transition{hall, &NORTH, kitchen},
+        Transition{hall, &SOUTH, frontGarden},
+        Transition{kitchen, &SOUTH, hall},
+        Transition{kitchen, &SMELL, kitchen, [&]() { getHungry(); }},
+        Transition{kitchen, &EAT, kitchen, [&]() { eat(); }},
+        Transition{well, &EAST, frontGarden}
     };
-    enable();
+    activate(states, transitions);
 }
 
 void WizardsWorld::north()
@@ -59,19 +59,6 @@ void WizardsWorld::take()
 void WizardsWorld::noAction(StdEvents event)
 {
 
-}
-
-void WizardsWorld::startStd(StdEvents event)
-{
-    switch (event)
-    {
-    case StdEvents::START:
-        transitionTo(&frontGarden);
-        break;
-    case StdEvents::ENTRY:
-    case StdEvents::EXIT:
-      break;
-    }
 }
 
 void WizardsWorld::houseAction(StdEvents event)

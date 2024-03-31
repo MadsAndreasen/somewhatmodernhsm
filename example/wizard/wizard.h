@@ -12,7 +12,6 @@ public:
   void take();
 
 private:
-  State world, house, hall, kitchen, garden, frontGarden, well;
   Event NORTH, EAST, SOUTH, WEST;
   Event SMELL, EAT;
 

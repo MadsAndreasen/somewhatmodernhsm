@@ -7,8 +7,8 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "lldb mdoor",
-            "program": "${workspaceFolder}/builddir/example/mdoor/mdoor",
+            "name": "Wizard world",
+            "program": "${workspaceFolder}/builddir/example/wizard/wizard",
             "args": [],
             "cwd": "${workspaceFolder}"
         },
