@@ -1,0 +1,7 @@
+[wrap-git]
+url = https://github.com/google/glog.git
+revision = head
+depth = 1
+
+[provide]
+glog = glog_dep
