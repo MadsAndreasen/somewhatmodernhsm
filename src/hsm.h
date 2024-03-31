@@ -24,16 +24,16 @@ class Event
         Event()
         {
             std::srand(std::time(nullptr)); //NOLINT - Don't complain about the seed value
-            m_event = std::rand(); //NOLINT
+            event_id = std::rand(); //NOLINT
         };
 
         auto operator==(Event const &other) const -> bool
         {
-            return m_event == other.m_event;
+            return event_id == other.event_id;
         }
 
     private:
-        int m_event;
+        int event_id;
 
 };
 
@@ -67,17 +67,19 @@ class Hsm
         explicit Hsm(std::string name);
 
         void activate(std::vector<std::shared_ptr<State>> states, std::vector<Transition> transitions);
-        void transitionTo(std::shared_ptr<State> const &target);
+
+    protected:
         void onEvent(Event const *event);
 
     private:
-        std::vector<Transition> transitions {};
-        std::vector<std::shared_ptr<State>> states {};
-
+        void transitionTo(std::shared_ptr<State> const &target);
+        void onEvent(StdEvents event);
         void entry(std::shared_ptr<State> const &target);
         void exit(std::shared_ptr<State> const &target);
         auto findCommonParent(std::shared_ptr<State> const &other) -> std::shared_ptr<State>;
 
+        std::vector<Transition> transitions {};
+        std::vector<std::shared_ptr<State>> states {};
         std::string name;
         std::shared_ptr<State> currentState = nullptr;
 };

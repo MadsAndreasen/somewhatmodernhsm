@@ -34,14 +34,19 @@ void Hsm::onEvent(Event const *event)
     }
 }
 
+void Hsm::onEvent(StdEvents event)
+{
+    currentState->handleStandardEvents(event);
+}
+
 void Hsm::activate(std::vector<std::shared_ptr<State>> states, std::vector<Transition> transitions)
 {
     this->transitions = std::move(transitions);
     this->states = std::move(states);
     currentState = this->states.at(0);
 
-    currentState->handleStandardEvents(StdEvents::ENTRY);
-    currentState->handleStandardEvents(StdEvents::START);
+    onEvent(StdEvents::ENTRY);
+    onEvent(StdEvents::START);
 }
 
 void Hsm::transitionTo(std::shared_ptr<State> const &target)
