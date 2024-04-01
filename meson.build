@@ -7,5 +7,6 @@ project('Modern HSM',
 
 subdir('src')
 subdir('example/mdoor')
+subdir('example/watch')
 subdir('example/wizard')
 subdir('tests')
