@@ -27,8 +27,7 @@ void Hsm::onEvent(Event const *event)
                 {
                     transitionTo(transition.to);
                 }
-
-                break;
+                return;
             }
         }
     }
