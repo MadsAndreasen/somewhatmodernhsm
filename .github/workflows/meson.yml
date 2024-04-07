@@ -9,20 +9,45 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install dependencies
-      run: sudo apt-get install clang-tidy ninja-build python3
+      run: sudo apt-get install clang-tidy ninja-build python3 gcovr lcov
 
     - name: Install mesons
       run: python3 -m pip install meson
 
     - name: Create Build Environment
-      run: meson setup build
+      run: meson setup builddir -Db_coverage=true
 
     - name: Compile
       shell: bash
-      working-directory: build
-      run: meson compile
+      working-directory: builddir
+      run: ninja
 
     - name: Test
-      working-directory: build
+      working-directory: builddir
       shell: bash
       run: meson test
+
+    - name: Coverage
+      working-directory: builddir
+      shell: bash
+      run: ninja coverage-xml
+
+    - name: Code Coverage Report
+      uses: irongut/CodeCoverageSummary@v1.3.0
+      with:
+        filename: builddir/meson-logs/coverage.xml
+        badge: true
+        fail_below_min: false
+        format: markdown
+        hide_branch_rate: false
+        hide_complexity: true
+        indicators: true
+        output: both
+        thresholds: '60 80'
+
+    - name: Add Coverage PR Comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: github.event_name == 'pull_request'
+      with:
+        recreate: true
+        path: code-coverage-results.md
