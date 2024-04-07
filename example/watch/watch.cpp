@@ -35,7 +35,7 @@ Watch::Watch() : Hsm("Watch")
         Transition{minutes, &SET, day, std::nullopt},
         Transition{day, &MODE, day, [&] { temp_time += 24h; }},
         Transition{day, &SET, month, std::nullopt},
-        Transition{month, &MODE, month, [&] { temp_time += 30 * 24h; }},
+        Transition{month, &MODE, month, [&] { temp_time += 30 * 24h; }}, //NOLINT
         Transition{month, &SET, timekeeping, std::nullopt},
 
     };

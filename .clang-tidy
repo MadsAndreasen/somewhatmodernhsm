@@ -1,1 +1,1 @@
-Checks: '*,-fuchsia-*,-llvmlibc-*,-altera-*'
+Checks: '*,-fuchsia-*,-llvmlibc-*,-altera-*,-llvm-header-guard'

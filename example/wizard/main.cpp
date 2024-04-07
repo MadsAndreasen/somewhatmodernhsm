@@ -17,7 +17,7 @@ auto main() -> int
     WizardsWorld world;
 
     while(true) {
-        std::string cmd = readCmd();
+        const std::string cmd = readCmd();
         if("quit" == cmd || "q" == cmd) {
             break;
         }

@@ -4,7 +4,8 @@ RUN apt update && apt install -y --no-install-recommends software-properties-com
 
 RUN apt update && apt install -y --no-install-recommends \
                                                          python3 python3-pip pipx git python-is-python3 \
-                                                         sudo ninja-build build-essential fish gcovr lcov llvm
+                                                         sudo ninja-build build-essential fish gcovr lcov llvm \
+                                                         clang
 
 RUN echo 'ubuntu ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/ubuntu
 USER ubuntu
