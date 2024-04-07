@@ -23,11 +23,11 @@ jobs:
       run: ninja
 
     - name: Test
-      working-directory: build
+      working-directory: builddir
       shell: bash
       run: meson test
 
     - name: Coverage
-      working-directory: build
+      working-directory: builddir
       shell: bash
       run: ninja coverage-html
