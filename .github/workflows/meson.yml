@@ -9,20 +9,25 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install dependencies
-      run: sudo apt-get install clang-tidy ninja-build python3
+      run: sudo apt-get install clang-tidy ninja-build python3 gcovr lcov
 
     - name: Install mesons
       run: python3 -m pip install meson
 
     - name: Create Build Environment
-      run: meson setup build
+      run: meson setup builddir -Db_coverage=true
 
     - name: Compile
       shell: bash
-      working-directory: build
-      run: meson compile
+      working-directory: builddir
+      run: ninja
 
     - name: Test
       working-directory: build
       shell: bash
       run: meson test
+
+    - name: Coverage
+      working-directory: build
+      shell: bash
+      run: ninja coverage-html
