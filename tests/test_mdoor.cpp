@@ -1,11 +1,25 @@
 #include "gtest/gtest.h"
 #include "mdoor.h"
 
+#include <cstdlib>
+#include <new>
+
+static size_t malloc_count = 0;
+
+void* operator new(size_t size) {
+    malloc_count++;
+    return std::malloc(size);
+}
+
+void operator delete(void* ptr) noexcept {
+    std::free(ptr);
+}
+
+// Rest of your code...
 // NOLINTNEXTLINE
 TEST(modern, sunshine_door_test)
 {
     Door door;
-
     EXPECT_EQ("Knock to open", door.readDoorSign());
 
     door.open();
@@ -24,7 +38,10 @@ TEST(modern, cannot_lock_open_door)
 {
     Door door;
 
+    auto current_malloc = malloc_count;
+
     door.open();
+    EXPECT_EQ(current_malloc, malloc_count);
     EXPECT_EQ("Come on in", door.readDoorSign());
 
     door.lock();

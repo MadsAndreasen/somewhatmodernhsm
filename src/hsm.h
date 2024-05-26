@@ -4,6 +4,7 @@
 #include <memory>
 #include <optional>
 #include <random>
+#include <stack>
 #include <string>
 #include <sys/types.h>
 #include <vector>
@@ -83,4 +84,6 @@ class Hsm
         std::vector<std::shared_ptr<State>> states {};
         std::string name;
         std::shared_ptr<State> currentState = nullptr;
+        std::stack<std::shared_ptr<State>> trace;
+
 };

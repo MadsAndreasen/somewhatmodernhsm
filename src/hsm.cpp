@@ -1,7 +1,6 @@
 #include "hsm.h"
 
 #include <memory>
-#include <stack>
 #include <utility>
 #include <vector>
 
@@ -84,7 +83,6 @@ void Hsm::entry(std::shared_ptr<State> const &target)
 {
     auto commonParent = findCommonParent(target);
 
-    std::stack<std::shared_ptr<State>> trace;
     for(auto currentStep = target; currentStep != commonParent; currentStep = currentStep->parent)
     {
         trace.push(currentStep);
